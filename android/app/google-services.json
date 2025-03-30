@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "867573064613",
+    "project_id": "macro-global-app-test",
+    "storage_bucket": "macro-global-app-test.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867573064613:android:391b040822abd345507e4c",
+        "android_client_info": {
+          "package_name": "com.example.macro_global_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867573064613-im6lkv027q3egefflcho2464osfalg96.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.macro_global_app",
+            "certificate_hash": "1b20d0e141a28366f9ac41a6391edfaae2214212"
+          }
+        },
+        {
+          "client_id": "867573064613-55stccuto7h0l9n5a2m893urj7sr82hv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLmocz1d3gr2z8HB7EvH7x3j7jIdkh_O0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867573064613-55stccuto7h0l9n5a2m893urj7sr82hv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "867573064613-a78nmdesfanql8rh8343h2763apnh49u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.macroGlobalTestApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867573064613:android:d92ebc511acf9a00507e4c",
+        "android_client_info": {
+          "package_name": "com.example.macro_global_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867573064613-55stccuto7h0l9n5a2m893urj7sr82hv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLmocz1d3gr2z8HB7EvH7x3j7jIdkh_O0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867573064613-55stccuto7h0l9n5a2m893urj7sr82hv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "867573064613-a78nmdesfanql8rh8343h2763apnh49u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.macroGlobalTestApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
