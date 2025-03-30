@@ -79,15 +79,20 @@ class AuthService {
 
         final docSnapshot = await userDoc.get();
         if (!docSnapshot.exists) {
-          // Save basic user profile
-          await userDoc.set({
+          final data = {
             'name': user.displayName ?? '',
             'email': user.email ?? '',
             'photoURL': user.photoURL ?? '',
             'uid': user.uid,
-            'phone': docSnapshot["phone"] ?? '',
             'createdAt': FieldValue.serverTimestamp(),
-          });
+          };
+
+          // Only set phone if available
+          if (user.phoneNumber != null && user.phoneNumber!.isNotEmpty) {
+            data['phone'] = user.phoneNumber!;
+          }
+
+          await userDoc.set(data);
         }
       }
       await StorageService.setLoginStatus(true);
