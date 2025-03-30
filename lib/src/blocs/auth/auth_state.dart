@@ -10,3 +10,5 @@ class Unauthenticated extends AuthState {
   final String? message;
   Unauthenticated({this.message});
 }
+
+class GoogleAuthLoading extends AuthState {}

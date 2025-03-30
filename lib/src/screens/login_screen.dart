@@ -173,14 +173,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
-                    icon: Image.asset(
-                      'assets/images/google_logo.png',
-                      height: 20.0,
-                    ),
-                    label: const Text('Sign in with Google'),
-                    onPressed: () {
-                      context.read<AuthBloc>().add(GoogleSignInRequested());
-                    },
+                    icon: state is GoogleAuthLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Image.asset(
+                            'assets/images/google_logo.png',
+                            height: 20.0,
+                          ),
+                    label: state is GoogleAuthLoading ? const Text("Signing in...") : const Text('Sign in with Google'),
+                    onPressed: state is GoogleAuthLoading
+                        ? null
+                        : () {
+                            context.read<AuthBloc>().add(GoogleSignInRequested());
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _highlightGoogleButton ? Colors.orange.shade100 : Colors.white,
                       foregroundColor: Colors.black,
