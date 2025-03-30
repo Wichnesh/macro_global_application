@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:macro_global_test_app/src/blocs/auth/auth_bloc.dart';
@@ -283,6 +284,8 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: phoneController,
               decoration: const InputDecoration(labelText: "Phone"),
               keyboardType: TextInputType.phone,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              maxLength: 10,
             ),
             const SizedBox(height: 12),
             TextField(

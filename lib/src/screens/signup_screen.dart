@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toastification/toastification.dart';
 
@@ -99,6 +100,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 decoration: const InputDecoration(labelText: 'Phone Number'),
                 keyboardType: TextInputType.phone,
                 validator: (value) => value!.isEmpty ? 'Please enter phone number' : null,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                maxLength: 10,
               ),
               ValueListenableBuilder<String?>(
                 valueListenable: _emailError,
