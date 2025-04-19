@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
-        android:label="macro_global_test_app"
+        android:label="yelloskye"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

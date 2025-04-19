@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Firebase Task App',
+        title: 'Yelloskye',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
