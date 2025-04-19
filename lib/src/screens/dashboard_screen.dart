@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/map/MapBloc.dart';
 import '../blocs/project/ProjectBloc.dart';
 import '../blocs/project/ProjectEvent.dart';
 import '../screens/project_screen_ui.dart';
 import '../service/ChartScreen.dart';
+import 'MapScreen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -19,7 +21,7 @@ class _DashboardState extends State<Dashboard> {
 
   final List<Widget> _pages = [
     const ProjectScreen(),
-    const Center(child: Text('Map Tab Coming Soon')),
+    const MapScreen(),
     const ChartScreen(), // ✅ Chart tab added here
   ];
 
@@ -35,7 +37,10 @@ class _DashboardState extends State<Dashboard> {
       providers: [
         BlocProvider<ProjectBloc>(
           create: (_) => ProjectBloc(FirebaseFirestore.instance)..add(LoadProjects()),
-        )
+        ),
+        BlocProvider<MapBloc>(
+          create: (_) => MapBloc(FirebaseFirestore.instance),
+        ),
       ],
       child: Scaffold(
         body: _pages[_selectedIndex],
