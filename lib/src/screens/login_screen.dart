@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:macro_global_test_app/src/screens/dashboard_screen.dart';
 import 'package:toastification/toastification.dart';
 
 import '../blocs/auth/auth_bloc.dart';
@@ -8,7 +9,6 @@ import '../blocs/auth/auth_event.dart';
 import '../blocs/auth/auth_state.dart';
 import '../service/biometric_auth.dart';
 import '../service/storage_service.dart';
-import 'home_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -94,7 +94,24 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is Authenticated) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              MaterialPageRoute(builder: (_) => const Dashboard()),
+            );
+          } else if (state is ForgotPasswordEmailSent) {
+            toastification.show(
+              context: context,
+              type: ToastificationType.success,
+              style: ToastificationStyle.fillColored,
+              title: const Text("Password reset link sent successfully!"),
+              autoCloseDuration: const Duration(seconds: 4),
+            );
+            _emailController.clear();
+          } else if (state is ForgotPasswordError) {
+            toastification.show(
+              context: context,
+              type: ToastificationType.error,
+              style: ToastificationStyle.flat,
+              title: Text(state.message),
+              autoCloseDuration: const Duration(seconds: 4),
             );
           } else if (state is Unauthenticated && state.message != null) {
             if (state.message!.contains('already registered via Google')) {
@@ -145,6 +162,41 @@ class _LoginScreenState extends State<LoginScreen> {
                       errorText: _passwordError,
                       border: const OutlineInputBorder(),
                     ),
+                  ),
+                  const SizedBox(height: 24),
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      final isLoading = state is ForgotPasswordLoading;
+
+                      return Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  final email = _emailController.text.trim();
+                                  if (email.isEmpty || !email.contains('@')) {
+                                    setState(() {
+                                      _emailError = 'Enter a valid email to reset password';
+                                    });
+                                  } else {
+                                    context.read<AuthBloc>().add(ForgotPasswordRequested(email));
+                                  }
+                                },
+                          icon: isLoading
+                              ? const SizedBox(
+                                  height: 16,
+                                  width: 16,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.lock_reset, size: 18),
+                          label: Text(
+                            isLoading ? 'Sending...' : 'Forgot Password?',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(

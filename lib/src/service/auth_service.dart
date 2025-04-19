@@ -70,7 +70,7 @@ class AuthService {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-//
+
       final userCredential = await _auth.signInWithCredential(credential);
       final user = userCredential.user;
 
@@ -87,7 +87,6 @@ class AuthService {
             'createdAt': FieldValue.serverTimestamp(),
           };
 
-          // Only set phone if available
           if (user.phoneNumber != null && user.phoneNumber!.isNotEmpty) {
             data['phone'] = user.phoneNumber!;
           }
@@ -121,5 +120,9 @@ class AuthService {
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserProfile(String uid) {
     return FirebaseFirestore.instance.collection('users').doc(uid).get();
+  }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 }

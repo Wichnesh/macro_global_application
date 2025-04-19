@@ -12,3 +12,12 @@ class Unauthenticated extends AuthState {
 }
 
 class GoogleAuthLoading extends AuthState {}
+
+class ForgotPasswordEmailSent extends AuthState {}
+
+class ForgotPasswordError extends AuthState {
+  final String message;
+  ForgotPasswordError(this.message);
+}
+
+class ForgotPasswordLoading extends AuthState {}

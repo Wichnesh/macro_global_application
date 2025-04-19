@@ -13,6 +13,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutRequested>(_onLogoutRequested);
     on<GoogleSignInRequested>(_onGoogleSignInRequested);
     on<SignUpRequested>(_onSignUpRequested);
+    on<ForgotPasswordRequested>(_onForgotPasswordRequested);
+  }
+
+  void _onForgotPasswordRequested(ForgotPasswordRequested event, Emitter<AuthState> emit) async {
+    emit(ForgotPasswordLoading());
+    try {
+      if (event.email.isEmpty || !event.email.contains('@')) {
+        emit(ForgotPasswordError("Please enter a valid email address."));
+        return;
+      }
+
+      try {
+        await authService.sendPasswordResetEmail(event.email);
+        emit(ForgotPasswordEmailSent());
+      } catch (firebaseError) {
+        emit(ForgotPasswordError("Failed to send reset email. ${firebaseError.toString()}"));
+      }
+    } catch (e) {
+      emit(ForgotPasswordError("An unexpected error occurred. ${e.toString()}"));
+    }
   }
 
   void _onLoginRequested(LoginRequested event, Emitter<AuthState> emit) async {
@@ -20,7 +40,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await authService.signInWithEmail(event.email, event.password);
       if (user != null) {
-        // 🔥 Fetch user data from Firestore
         final snapshot = await authService.getUserProfile(user.uid);
         final data = snapshot.data();
 
@@ -43,8 +62,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onLogoutRequested(LogoutRequested event, Emitter<AuthState> emit) async {
-    // Optionally cancel any subscriptions to Firestore streams here
-    emit(AuthLoading()); // Optional loader
+    emit(AuthLoading());
     await StorageService.clearUser();
     await authService.signOut();
     emit(Unauthenticated());
