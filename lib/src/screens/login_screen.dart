@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         final success = await BiometricService.authenticate(context);
         if (success) {
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacementNamed(context, '/dashboard');
         }
       });
     }
@@ -216,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () async {
                           final success = await BiometricService.authenticate(context);
                           if (success) {
-                            Navigator.pushReplacementNamed(context, '/home');
+                            Navigator.pushReplacementNamed(context, '/dashboard');
                           }
                         },
                         icon: const Icon(Icons.fingerprint, size: 26),

@@ -42,7 +42,6 @@ class BiometricService {
       SnackBar(content: Text(reason)),
     );
 
-    // Navigate to login
     Navigator.pushReplacementNamed(context, '/login');
   }
 }

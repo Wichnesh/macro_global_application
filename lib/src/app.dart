@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:macro_global_test_app/src/screens/dashboard_screen.dart';
 import 'package:macro_global_test_app/src/screens/home_screen.dart';
 import 'package:macro_global_test_app/src/screens/signup_screen.dart';
 import 'package:macro_global_test_app/src/service/task_service.dart';
@@ -23,9 +24,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => TaskBloc(TaskService()),
-          child: HomeScreen(),
-        )
-        // Add other BLoCs here if needed
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -38,6 +37,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/signup': (context) => const SignupScreen(),
           '/home': (context) => const HomeScreen(),
+          '/dashboard': (context) => const Dashboard(),
         },
       ),
     );
