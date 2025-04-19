@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -23,6 +24,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
   String? imageBase64;
   String? videoBase64;
   VideoPlayerController? _videoController;
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -65,6 +67,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
   }
 
   Future<void> uploadFileToFirestore(String type) async {
+    setState(() => _isUploading = true); // Show loader
     try {
       final result = await FilePicker.platform.pickFiles(
         type: type == 'image' ? FileType.image : FileType.video,
@@ -87,7 +90,6 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
         }
 
         final field = type == 'image' ? 'imageBase64' : 'videoBase64';
-
         await FirebaseFirestore.instance.collection('projects').doc(widget.project.id).update({field: base64});
 
         setState(() {
@@ -111,6 +113,34 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Upload failed: ${e.toString()}')),
       );
+    } finally {
+      setState(() => _isUploading = false); // Hide loader
+    }
+  }
+
+  Future<void> saveFile(Uint8List bytes, String fileName) async {
+    try {
+      final dir = await getApplicationDocumentsDirectory(); // No permissions needed
+      final path = '${dir.path}/$fileName';
+      final file = File(path);
+      await file.writeAsBytes(bytes, flush: true);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '$fileName saved to:\n$path',
+            style: const TextStyle(fontSize: 14),
+          ),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Download failed: ${e.toString()}'),
+          duration: const Duration(seconds: 4),
+        ),
+      );
     }
   }
 
@@ -126,56 +156,93 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(project.name)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(project.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text(project.description, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 16),
-            Text('People Working: ${project.peopleWorking}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 16),
-            const Text('Projected Revenue:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            ...project.projectedRevenue.entries.map((e) => Text('${e.key}: ${e.value}')),
-            const SizedBox(height: 20),
-            if (imageBase64 != null) ...[
-              const Text('Image Preview:', style: TextStyle(fontSize: 16)),
-              const SizedBox(height: 8),
-              Image.memory(base64Decode(imageBase64!), height: 200),
-            ],
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: () => uploadFileToFirestore('image'),
-              icon: const Icon(Icons.image),
-              label: const Text('Upload/Replace Image'),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(project.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Text(project.description, style: const TextStyle(fontSize: 16)),
+                const SizedBox(height: 16),
+                Text('People Working: ${project.peopleWorking}', style: const TextStyle(fontSize: 16)),
+                const SizedBox(height: 16),
+                const Text('Projected Revenue:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                ...project.projectedRevenue.entries.map((e) => Text('${e.key}: ${e.value}')),
+                const SizedBox(height: 20),
+                if (imageBase64 != null) ...[
+                  const Text('Image Preview:', style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 8),
+                  Image.memory(base64Decode(imageBase64!), height: 200),
+                  TextButton.icon(
+                    icon: const Icon(Icons.download),
+                    label: const Text("Download Image"),
+                    onPressed: () async {
+                      final bytes = base64Decode(imageBase64!);
+                      await saveFile(bytes, 'project_image_${widget.project.id}.png');
+                    },
+                  ),
+                ],
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  onPressed: () => uploadFileToFirestore('image'),
+                  icon: const Icon(Icons.image),
+                  label: const Text('Upload/Replace Image'),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  '📸 Only images below 1MB allowed',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                const SizedBox(height: 20),
+                if (_videoController != null && _videoController!.value.isInitialized) ...[
+                  const Text('Video Preview:', style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 8),
+                  AspectRatio(
+                    aspectRatio: _videoController!.value.aspectRatio,
+                    child: VideoPlayer(_videoController!),
+                  ),
+                  IconButton(
+                    icon: Icon(_videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow),
+                    onPressed: () {
+                      setState(() {
+                        _videoController!.value.isPlaying ? _videoController!.pause() : _videoController!.play();
+                      });
+                    },
+                  ),
+                  TextButton.icon(
+                    icon: const Icon(Icons.download),
+                    label: const Text("Download Video"),
+                    onPressed: () async {
+                      final bytes = base64Decode(videoBase64!);
+                      await saveFile(bytes, 'project_video_${widget.project.id}.mp4');
+                    },
+                  ),
+                ],
+                ElevatedButton.icon(
+                  onPressed: () => uploadFileToFirestore('video'),
+                  icon: const Icon(Icons.upload),
+                  label: const Text('Upload/Replace Video'),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  '🎬 Only videos below 1MB allowed',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            if (_videoController != null && _videoController!.value.isInitialized) ...[
-              const Text('Video Preview:', style: TextStyle(fontSize: 16)),
-              const SizedBox(height: 8),
-              AspectRatio(
-                aspectRatio: _videoController!.value.aspectRatio,
-                child: VideoPlayer(_videoController!),
+          ),
+          if (_isUploading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(),
               ),
-              IconButton(
-                icon: Icon(_videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow),
-                onPressed: () {
-                  setState(() {
-                    _videoController!.value.isPlaying ? _videoController!.pause() : _videoController!.play();
-                  });
-                },
-              ),
-            ],
-            ElevatedButton.icon(
-              onPressed: () => uploadFileToFirestore('video'),
-              icon: const Icon(Icons.upload),
-              label: const Text('Upload/Replace Video'),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
