@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/auth/auth_bloc.dart';
+import '../blocs/auth/auth_event.dart';
 import '../blocs/map/MapBloc.dart';
 import '../blocs/project/ProjectBloc.dart';
 import '../blocs/project/ProjectEvent.dart';
@@ -43,6 +45,17 @@ class _DashboardState extends State<Dashboard> {
         ),
       ],
       child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () async {
+                context.read<AuthBloc>().add(LogoutRequested());
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+            )
+          ],
+        ),
         body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
