@@ -8,6 +8,8 @@ class ProjectModel {
   final String? videoUrl;
   final String? imageBase64;
   final String? videoBase64;
+  final double? latitude;
+  final double? longitude;
 
   ProjectModel({
     required this.id,
@@ -19,6 +21,8 @@ class ProjectModel {
     this.videoUrl,
     this.imageBase64,
     this.videoBase64,
+    this.latitude,
+    this.longitude,
   });
 
   factory ProjectModel.fromMap(String id, Map<String, dynamic> data) {
@@ -32,6 +36,8 @@ class ProjectModel {
       videoUrl: data['videoUrl'],
       imageBase64: data['imageBase64'],
       videoBase64: data['videoBase64'],
+      latitude: (data['latitude'] as num?)?.toDouble(),
+      longitude: (data['longitude'] as num?)?.toDouble(),
     );
   }
 
@@ -45,6 +51,8 @@ class ProjectModel {
       'videoUrl': videoUrl,
       'imageBase64': imageBase64,
       'videoBase64': videoBase64,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 }

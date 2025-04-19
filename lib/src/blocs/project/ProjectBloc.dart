@@ -31,6 +31,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
             projectedRevenue: {'Jan': 5000, 'Feb': 7000, 'Mar': 8500},
             imageUrl: null,
             videoUrl: null,
+            latitude: 13.0827, // Chennai, Tamil Nadu
+            longitude: 80.2707,
           ),
           ProjectModel(
             id: '',
@@ -40,6 +42,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
             projectedRevenue: {'Jan': 4000, 'Feb': 6000, 'Mar': 7500},
             imageUrl: null,
             videoUrl: null,
+            latitude: 10.7905, // Coimbatore, Tamil Nadu
+            longitude: 76.7046,
           ),
           ProjectModel(
             id: '',
@@ -49,6 +53,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
             projectedRevenue: {'Jan': 5500, 'Feb': 7200, 'Mar': 9000},
             imageUrl: null,
             videoUrl: null,
+            latitude: 11.1271, // Tiruchirapalli, Tamil Nadu
+            longitude: 78.6569,
           ),
         ];
 
