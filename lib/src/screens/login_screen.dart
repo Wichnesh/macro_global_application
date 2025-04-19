@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:macro_global_test_app/src/screens/dashboard_screen.dart';
 import 'package:toastification/toastification.dart';
 
 import '../blocs/auth/auth_bloc.dart';
@@ -92,9 +91,9 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is Authenticated) {
-            Navigator.pushReplacement(
+            Navigator.pushReplacementNamed(
               context,
-              MaterialPageRoute(builder: (_) => const Dashboard()),
+              '/dashboard',
             );
           } else if (state is ForgotPasswordEmailSent) {
             toastification.show(
