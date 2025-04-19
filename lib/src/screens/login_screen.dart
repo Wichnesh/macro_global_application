@@ -91,9 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is Authenticated) {
-            Navigator.pushReplacementNamed(
+            Navigator.pushNamedAndRemoveUntil(
               context,
               '/dashboard',
+              (route) => false, // 🔥 Clears all previous routes
             );
           } else if (state is ForgotPasswordEmailSent) {
             toastification.show(
